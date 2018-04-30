@@ -12,10 +12,19 @@ public:
 
   /*
   * Coefficients
-  */ 
+  */
   double Kp;
   double Ki;
   double Kd;
+
+  double prev_cte;
+
+  double square_error;
+  int n;
+  bool is_twiddle, step1, step2;
+
+  double best_square_error;
+  double dp[3];
 
   /*
   * Constructor
@@ -36,6 +45,15 @@ public:
   * Update the PID error variables given cross track error.
   */
   void UpdateError(double cte);
+
+  /*
+  * Update the Twiddle params.
+  */
+  void UpdateTwiddleParams(double cte);
+
+  void PrintImprovement();
+
+  void UpdateParams(int i, int value);
 
   /*
   * Calculate the total PID error.
