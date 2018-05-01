@@ -28,14 +28,14 @@ std::string hasData(std::string s) {
   return "";
 }
 
-int main()
+int main(int argc, char *argv[])
 {
   uWS::Hub h;
 
   PID pid;
 
-  // Best Square error is 2.30507e-06
-  pid.Init(0.1, 0.1, 3.0);
+  // pid.Init(atof(argv[1]), atof(argv[2]), atof(argv[3]));
+  pid.Init(-0.25 , 0 , -2.5 );
 
   h.onMessage([&pid](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.

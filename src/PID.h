@@ -17,10 +17,9 @@ public:
   double Ki;
   double Kd;
 
-  double prev_cte;
-
   double square_error;
   int n;
+  int num_steps;
   bool is_twiddle, step1, step2;
 
   double best_square_error;

@@ -12,32 +12,31 @@ void PID::Init(double _Kp, double _Ki, double _Kd) {
   PID::Kp = _Kp;
   PID::Ki = _Ki;
   PID::Kd = _Kd;
+
   PID::p_error = 0.0;
-  PID::prev_cte = -1.0;
   PID::i_error = 0.0;
   PID::d_error = 0.0;
 
-  // All new twiddle params
+  // Twiddle params
   PID::is_twiddle = false;
+  PID::num_steps = 0;
   PID::step1 = false;
   PID::step2 = false;
   PID::square_error = 0.0;
   PID::n = 0;
-  dp = {0.1 * Kp, 0.1* Ki, 0.1* Kd}
+  for(int i=0; i<3; i++){
+    dp[i] = 0.1;
+  }
   PID::best_square_error = 1.0;
 }
 
 void PID::UpdateError(double cte) {
-  if(prev_cte == -1.0){
-    d_error = cte - cte;
-  } else {
-    d_error = cte - prev_cte;
-  }
+  d_error = cte - p_error;
   p_error = cte;
   i_error += cte;
-  prev_cte = cte;
 
-  if(is_twiddle){
+  // Adjust params every 1000 iterations
+  if(is_twiddle && num_steps % 1000 == 0){
     square_error = ((cte * cte) + square_error*n) / (n+1) ;
     cout << "Square error is " << square_error << endl;
     //double new_square_error = 0.0;
@@ -59,6 +58,9 @@ void PID::UpdateError(double cte) {
       step1 = step2 = false;
     }
     n += 1;
+  }
+  if(is_twiddle){
+    num_steps++;
   }
 
 }
@@ -88,5 +90,5 @@ void PID::UpdateParams(int i, int value){
 
 
 double PID::TotalError() {
-    return -Kp * p_error - Ki * i_error - Kd * d_error;
+    return Kp * p_error + Ki * i_error + Kd * d_error;
 }
